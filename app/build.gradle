@@ -5,8 +5,11 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
+//    id 'io.gitlab.arturbosch.detekt'
 }
 
+apply plugin: "io.gitlab.arturbosch.detekt"
+apply from: "$project.rootDir/jacoco.gradle"
 
 android {
     namespace 'com.example.mytestingapplication'
@@ -26,6 +29,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+//            testCoverageEnabled true
         }
     }
 
@@ -57,6 +63,7 @@ dependencies {
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.13.0'
+    implementation 'androidx.core:core-ktx:+'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     //Retrofit
@@ -83,7 +90,49 @@ dependencies {
     implementation "androidx.activity:activity-ktx:1.6.1"
 
     testImplementation 'junit:junit:4.13.2'
+    testImplementation "org.mockito:mockito-core:3.4.6"
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1'
+    testImplementation 'app.cash.turbine:turbine:0.11.0'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+detekt {
+// Version of Detekt that will be used. When unspecified the latest detekt
+// version found will be used. Override to stay on the same version.
+    toolVersion = "1.22.0"
+
+    // The directories where detekt looks for source files.
+    // Defaults to `files("src/main/java", "src/test/java", "src/main/kotlin", "src/test/kotlin")`.
+    source = files("src/main/kotlin")
+    // Builds the AST in parallel. Rules are always executed in parallel.
+    // Can lead to speedups in larger projects. `false` by default.
+    parallel = false
+
+    // Define the detekt configuration(s) you want to use.
+    // Defaults to the default detekt configuration.
+    config = files("config/config.yml")
+
+    // Applies the config files on top of detekt's default config file. `false` by default.
+    buildUponDefaultConfig = false
+
+    // Turns on all the rules. `false` by default.
+    allRules = false
+
+    // Specifying a baseline file. All findings stored in this file in subsequent runs of detekt.
+    baseline = file("config/baseline.xml")
+
+    // Disables all default detekt rulesets and will only run detekt with custom rules
+    // defined in plugins passed in with `detektPlugins` configuration. `false` by default.
+    disableDefaultRuleSets = false
+
+    // Adds debug output during task execution. `false` by default.
+    debug = false
+
+    // If set to `true` the build does not fail when the
+    // maxIssues count was reached. Defaults to `false`.
+    ignoreFailures = false
+
 }

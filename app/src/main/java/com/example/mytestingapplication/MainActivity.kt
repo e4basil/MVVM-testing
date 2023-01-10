@@ -30,8 +30,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(mBinding.root)
         intentService = Intent(applicationContext, MyService::class.java)
 
-        repositoriesAdapter = RepositoriesAdapter()
-        mBinding.rv.adapter = repositoriesAdapter
+        repositoriesAdapter = RepositoriesAdapter().also {
+            mBinding.rv.adapter = it
+        }
+
         setObservers()
         getDataAndSubscribeEvents()
     }
@@ -40,12 +42,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         mainViewModel.repositoryListLiveData.observe(this){
             when(it){
                 is ResultData.Loading->{
+                    mBinding.pb.visibility=View.VISIBLE
                     Log.d(getString(R.string.app_name), "setObservers: Loading")
                 }
                 is ResultData.Failed->{
+                    mBinding.pb.visibility=View.GONE
                     Log.d(getString(R.string.app_name), "setObservers: Failed")
                 }
                 is ResultData.Success->{
+                    mBinding.pb.visibility=View.GONE
                     Log.d(getString(R.string.app_name), "setObservers: Success")
 //                    Log.d(getString(R.string.app_name), "setObservers: ${it.data}")
 
